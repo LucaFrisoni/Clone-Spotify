@@ -4,15 +4,16 @@ import { useMemo } from "react";
 import { HiHome } from "react-icons/hi";
 import { BiSearch } from "react-icons/bi";
 import Box from "./Box";
-import SideBarItem from "./SideBarItem"
+import SideBarItem from "./SideBarItem";
 import Library from "./Library";
-
+import { Song } from "@/types";
 
 interface SideBarProps {
   children: React.ReactNode;
+  songs: Song[];
 }
 
-const SideBar: React.FC<SideBarProps> = ({ children }) => {
+const SideBar: React.FC<SideBarProps> = ({ children, songs }) => {
   const pathname = usePathname();
 
   const routes = useMemo(() => {
@@ -42,7 +43,10 @@ const SideBar: React.FC<SideBarProps> = ({ children }) => {
             ))}
           </div>
         </Box>
-        <Box className=" overflow-y-auto h-full"> <Library/></Box>
+        <Box className=" overflow-y-auto h-full">
+          {" "}
+          <Library songs={songs} />
+        </Box>
       </div>
       <main className=" h-full overflow-y-auto flex-1 py-2">{children}</main>
     </div>
