@@ -22,7 +22,7 @@ const SearchInput = () => {
     router.push(url)
   }, [debouncedValue,router]);
 
-  return <Input placeholder="What do you want to listen to ?" value={value} onChange={(e)=>{ setValue(e.target.value)}}/>;
+  return <Input placeholder="What song do you want to listen to ?" value={value} onChange={(e)=>{ setValue(e.target.value)}}/>;
 };
 
 export default SearchInput;

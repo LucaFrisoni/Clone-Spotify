@@ -32,7 +32,7 @@ const LikedContent: React.FC<LikedContentProps> = ({ songs }) => {
       </div>
     );
   }
-
+console.log(songs)
   return (
     <div className="flex flex-col gap-y-2 w-full p-6 bg-gradient-to-b from-emerald-950" >
       <div className=" grid grid-cols-2 items-center">
@@ -40,7 +40,7 @@ const LikedContent: React.FC<LikedContentProps> = ({ songs }) => {
         <h2 className=" text-neutral-400"><AiFillClockCircle/></h2>
       </div>
       <hr className=" border-neutral-600"/>
-      {songs.map((song,index) => (
+      {songs.reverse().map((song,index) => (
        
         <div key={song.id} className="flex items-center gap-x-4 w-full">
           <div className="flex-1">
