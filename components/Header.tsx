@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import { HiHome } from "react-icons/hi";
@@ -11,27 +11,48 @@ import useAuthModal from "@/hooks/useAuthModal";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useUser } from "@/hooks/useUser";
 import { FaUserAlt } from "react-icons/fa";
-import { toast } from "react-hot-toast"
+import { toast } from "react-hot-toast";
+import usePlaylistNames from "@/hooks/usePlaylistNames";
+
+interface PlaylistItem {
+  name: string;
+  imgPlayList_path: string;
+  // Otras propiedades relevantes de los elementos de la playlist
+}
+
 interface HeaderProps {
   children: React.ReactNode;
   className?: string;
+  playlist?: PlaylistItem[];
 }
 
-const Header: React.FC<HeaderProps> = ({ children, className }) => {
+const Header: React.FC<HeaderProps> = ({ children, className, playlist }) => {
   const router = useRouter();
   const AuthModal = useAuthModal();
-
+  const [localPlaylists, setLocalPlaylists] = useState<PlaylistItem[]>([]); // Estado local
   const supabaseClient = useSupabaseClient();
   const { user } = useUser();
+
+  const usePlayListNames = usePlaylistNames();
+
+  useEffect(() => {
+    // Actualizar el estado usePlaylistNames solo cuando localPlaylists cambie
+    if (playlist) {
+      
+      usePlayListNames.setPlayLists(playlist);
+      setLocalPlaylists(playlist)
+    }
+  }, [localPlaylists]);
+  
 
   const handleLogOut = async () => {
     const { error } = await supabaseClient.auth.signOut();
     //reset any playing songs
     router.refresh();
     if (error) {
-     toast.error(error.message)
-    }else{
-      toast.success("Logged out!")
+      toast.error(error.message);
+    } else {
+      toast.success("Logged out!");
     }
   };
 
@@ -65,11 +86,18 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
         {/* ----------------------------Responsive Cel media --------------------------------------------------------------------------- */}
 
         <div className="flex md:hidden gap-x-2 items-center">
-          <button onClick={()=>router.push("/")} className=" rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition">
+          <button
+            onClick={() => router.push("/")}
+            className=" rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition"
+          >
             <HiHome className="text-black" size={20} />
           </button>
           <button className=" rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition">
-            <BiSearch onClick={()=>router.push("/search")} className="text-black" size={20} />
+            <BiSearch
+              onClick={() => router.push("/search")}
+              className="text-black"
+              size={20}
+            />
           </button>
         </div>
         {/* ----------------------------Responsive Cel media --------------------------------------------------------------------------- */}

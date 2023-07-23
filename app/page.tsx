@@ -1,30 +1,41 @@
+
+import getPlayLists from "@/actions/getPlaylists";
 import getSongs from "@/actions/getSongs";
 import Header from "@/components/Header";
 import ListItem from "@/components/ListItem";
 import PageContent from "@/components/PageContent";
+import usePlaylistNames from "@/hooks/usePlaylistNames";
 
 export const revalidate = 0;
 
 export default async function Home() {
   const songs = await getSongs();
+  const playlists = await getPlayLists();
+  console.log(playlists);
 
   return (
     <div className=" bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
-      <Header>
+      <Header playlist={playlists}>
         <div className=" mb-2">
           <h1 className="text-white text-3xl font-semibold">Welcome back!</h1>
-          <h2 className="text-neutral-400 text-2xl font-semibold">Your Playlists</h2>
+          <h2 className="text-neutral-400 text-2xl font-semibold">
+            Your Playlists
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 mt-4">
             <ListItem
               image="/images/liked.png"
               name="Liked Songs"
               href="liked"
             />
-            <ListItem
-              image="/images/liked.png"
-              name="PlayList 1"
-              href="playlist?name=electro"
-            />
+            {playlists.map((playlist) => (
+              <ListItem
+                key={playlist.imgPlayList_path}
+                image={playlist.imgPlayList_path}
+                name={playlist.name}
+                href={`playlist?name=${playlist.name}`}
+                playlist={true}
+              />
+            ))}
           </div>
         </div>
       </Header>

@@ -9,19 +9,24 @@ import usePlayer from "@/hooks/usePlayer";
 import useSound from "use-sound";
 import Slider from "./Slider";
 import SliderSong from "./SliderSong";
+import PlaylistButton from "./PlaylistButton";
 
 interface PlayerContentProps {
   song: Song;
   songUrl: string;
+  playlists?: any;
 }
 
-const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
+const PlayerContent: React.FC<PlayerContentProps> = ({
+  song,
+  songUrl,
+  playlists,
+}) => {
   const player = usePlayer();
   const [volume, setVolume] = useState(1);
   const [isPlaying, setIsPLaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [sliderTime, setSliderValue] = useState(0);
- 
 
   const Icon = isPlaying ? BsPauseFill : BsPlayFill;
   const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
@@ -62,7 +67,6 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     onend: () => {
       setIsPLaying(false);
       onPlayNext();
-   
     },
     onpause: () => setIsPLaying(false),
     format: ["mp3"],
@@ -80,16 +84,6 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
   }
   const duracionFormateada = convertirTiempoAMinutosYSegundos(duration);
 
-
-
-  function convertirTiempoAMinutos(tiempoMs: any) {
-    const segundosTotales = Math.floor(tiempoMs / 1000);
-    const minutos = Math.floor(segundosTotales / 60);
-    return minutos;
-  }
-
-
-
   useEffect(() => {
     sound?.play();
 
@@ -105,7 +99,6 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     } else {
       pause();
     }
-   
   };
 
   useEffect(() => {
@@ -120,14 +113,14 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     return () => clearInterval(interval);
   }, [sound]);
 
-
-  function formatTime(seconds:number) {
+  function formatTime(seconds: number) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-  
+
     const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    const formattedSeconds = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-  
+    const formattedSeconds =
+      remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+
     return `${formattedMinutes}:${formattedSeconds}`;
   }
 
@@ -135,7 +128,6 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     setSliderValue(value);
     sound?.seek(value); // Convertimos el valor del slider en el tiempo de reproducción (en milisegundos)
   };
-
 
   const toggleMute = () => {
     if (volume === 0) {
@@ -151,6 +143,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
         <div className=" flex items-center gap-x-4">
           <MediaItem data={song} player={true} />
           <LikedButton songId={song.id} />
+          <PlaylistButton  />
         </div>
       </div>
 
@@ -182,15 +175,17 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
           />
         </div>
       </div>
-        <div className="md:hidden flex w-full items-center">
-        <p className=" p-3 text-xs text-neutral-400 ">{formatTime(currentTime)}</p>
+      <div className="md:hidden flex w-full items-center">
+        <p className=" p-3 text-xs text-neutral-400 ">
+          {formatTime(currentTime)}
+        </p>
         <SliderSong
           min={0}
-          max={duration! / 1000 }
+          max={duration! / 1000}
           value={currentTime}
           onChange={handleSliderChange}
-          />
-          <p className=" p-3  text-xs text-neutral-400 ">{duracionFormateada}</p>
+        />
+        <p className=" p-3  text-xs text-neutral-400 ">{duracionFormateada}</p>
       </div>
 
       <div className="  hidden h-full md:flex justify-center items-center w-full  gap-x-6 relative md:col-span-2  flex-wrap ">
@@ -213,17 +208,21 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
           size={25}
           className=" text-neutral-400 cursor-pointer hover:text-white transition"
         />
-    
-      <div className=" flex w-full">
-        <p className=" p-3 text-xs text-neutral-400 ">{formatTime(currentTime)}</p>
-        <SliderSong
-          min={0}
-          max={duration! / 1000 }
-          value={currentTime}
-          onChange={handleSliderChange}
+
+        <div className=" flex w-full">
+          <p className=" p-3 text-xs text-neutral-400 ">
+            {formatTime(currentTime)}
+          </p>
+          <SliderSong
+            min={0}
+            max={duration! / 1000}
+            value={currentTime}
+            onChange={handleSliderChange}
           />
-          <p className=" p-3  text-xs text-neutral-400 ">{duracionFormateada}</p>
-      </div>
+          <p className=" p-3  text-xs text-neutral-400 ">
+            {duracionFormateada}
+          </p>
+        </div>
       </div>
       <div className=" hidden md:flex w-full justify-end pr-2">
         <div className=" flex items-center gap-x-2 w-[120px]">

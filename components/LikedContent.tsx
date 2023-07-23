@@ -32,7 +32,7 @@ const LikedContent: React.FC<LikedContentProps> = ({ songs }) => {
       </div>
     );
   }
-console.log(songs)
+
   return (
     <div className="flex flex-col gap-y-2 w-full p-6 bg-gradient-to-b from-emerald-950" >
       <div className=" grid grid-cols-2 items-center">
