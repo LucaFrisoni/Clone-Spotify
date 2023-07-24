@@ -83,6 +83,7 @@ const PlaylistModal = () => {
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
+     
     }
   };
 

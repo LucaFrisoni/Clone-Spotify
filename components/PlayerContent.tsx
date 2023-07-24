@@ -138,9 +138,9 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   };
 
   return (
-    <div className=" grid grid-cols-3 md:grid-cols-4 h-full">
+    <div className=" grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 h-full">
       <div className="flex w-full  justify-start">
-        <div className=" flex items-center gap-x-4">
+        <div className="flex items-center sm:gap-x-2 lg:gap-x-4">
           <MediaItem data={song} player={true} />
           <LikedButton songId={song.id} />
           <PlaylistButton  />
@@ -151,31 +151,32 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         className=" flex
       md:hidden
       col-auto
-      w-full
-      justify-end
+      w-full justify-center
       items-center
+      relative left-9
+      sm:left-0
       "
       >
-        <div className="flex  h-full justify-center items-center w-full gap-x-6 ">
+        <div className="flex  h-full justify-center items-center w-full ">
           <AiFillStepBackward
             onClick={onPlayPrevious}
-            size={30}
-            className="text-neutral-400 cursor-pointer hover:text-white transition w-[120px]"
+            size={25}
+            className="text-neutral-400 cursor-pointer hover:text-white transition sm:w-[60px] w-[120px] "
           />
           <div
             onClick={handlePLay}
-            className="h-10 flex items-center justify-center rounded-full bg-white p-1 cursor-pointer w-[40px]"
+            className="h-10 flex items-center justify-center rounded-full bg-white p-1 cursor-pointer w-[60px]"
           >
-            <Icon size={30} className="text-black" />
+            <Icon size={25} className="text-black" />
           </div>
           <AiFillStepForward
             onClick={onPlayNext}
-            size={30}
-            className="text-neutral-400 cursor-pointer hover:text-white transition w-[120px]"
+            size={25}
+            className="text-neutral-400 cursor-pointer hover:text-white transition sm:w-[60px] w-[120px]"
           />
         </div>
       </div>
-      <div className="md:hidden flex w-full items-center">
+      <div className="md:hidden flex w-full items-center relative top-3">
         <p className=" p-3 text-xs text-neutral-400 ">
           {formatTime(currentTime)}
         </p>
@@ -188,7 +189,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         <p className=" p-3  text-xs text-neutral-400 ">{duracionFormateada}</p>
       </div>
 
-      <div className="  hidden h-full md:flex justify-center items-center w-full  gap-x-6 relative md:col-span-2  flex-wrap ">
+      <div className="  hidden h-full md:flex justify-center items-center w-full  gap-x-6 relative md:col-span-2  flex-wrap md:relative md:left-14">
         <AiFillStepBackward
           onClick={onPlayPrevious}
           size={25}
@@ -209,7 +210,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
           className=" text-neutral-400 cursor-pointer hover:text-white transition"
         />
 
-        <div className=" flex w-full">
+        <div className=" sm:flex w-full">
           <p className=" p-3 text-xs text-neutral-400 ">
             {formatTime(currentTime)}
           </p>
@@ -224,7 +225,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
           </p>
         </div>
       </div>
-      <div className=" hidden md:flex w-full justify-end pr-2">
+      <div className=" hidden md:flex md:relative md:left-8 xl:left-0 w-full xl:justify-end justify-center pr-2">
         <div className=" flex items-center gap-x-2 w-[120px]">
           <VolumeIcon
             size={34}

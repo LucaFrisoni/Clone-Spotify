@@ -41,9 +41,10 @@ const Header: React.FC<HeaderProps> = ({ children, className, playlist }) => {
       
       usePlayListNames.setPlayLists(playlist);
       setLocalPlaylists(playlist)
+      
     }
   }, [localPlaylists]);
-  
+
 
   const handleLogOut = async () => {
     const { error } = await supabaseClient.auth.signOut();

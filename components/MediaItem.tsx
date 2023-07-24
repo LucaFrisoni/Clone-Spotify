@@ -58,7 +58,7 @@ const MediaItem: React.FC<MediaItemProps> = ({
           onClick={handleClick}
           className=" flex items-center gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md"
         >
-          <div className="  relative rounded-md min-h-[48px] min-w-[48px] overflow-hidden">
+          <div className="  relative min-h-[35px] min-w-[35px] rounded-md xl:min-h-[48px] xl:min-w-[48px] overflow-hidden">
             <Image
               alt="Image"
               fill
@@ -69,8 +69,8 @@ const MediaItem: React.FC<MediaItemProps> = ({
 
           <div className=" flex flex-col gap-y-1 overflow-hidden">
             {" "}
-            <p className=" text-white truncate">{data.tilte}</p>
-            <p className=" text-neutral-400 text-sm truncate">{data.author}</p>
+            <p className=" text-xs text-white truncate xl:text-base">{data.tilte}</p>
+            <p className=" text-xs text-neutral-400 xl:text-base truncate">{data.author}</p>
           </div>
         </div>
       ) : (

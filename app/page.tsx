@@ -4,14 +4,14 @@ import getSongs from "@/actions/getSongs";
 import Header from "@/components/Header";
 import ListItem from "@/components/ListItem";
 import PageContent from "@/components/PageContent";
-import usePlaylistNames from "@/hooks/usePlaylistNames";
+
 
 export const revalidate = 0;
 
 export default async function Home() {
   const songs = await getSongs();
   const playlists = await getPlayLists();
-  console.log(playlists);
+
 
   return (
     <div className=" bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
