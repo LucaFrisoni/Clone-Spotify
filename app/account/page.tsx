@@ -15,7 +15,7 @@ import useEditProfileModal from "@/hooks/zustand/useEditProfileModal";
 
 import { ClipLoader } from "react-spinners";
 
-const page = () => {
+const Account = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { supabaseClient } = useSessionContext();
   const { user } = useUser();
@@ -186,4 +186,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Account;
