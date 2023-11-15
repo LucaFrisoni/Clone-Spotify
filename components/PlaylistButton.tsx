@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import usePlaylistNames from "@/hooks/usePlaylistNames";
+import usePlaylistNames from "@/hooks/zustand/usePlaylistNames";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import { twMerge } from "tailwind-merge";
@@ -42,11 +42,11 @@ const PlaylistButton: React.FC<PlaylistButtonProps> = ({ className }) => {
           onClick={toggleMenu}
           className={twMerge(`hidden md:flex hover:opacity-75 transition`, className)}
         >
-          <BsThreeDotsVertical />
+          {/* <BsThreeDotsVertical /> */}
         </button>
       </DropdownMenu.Trigger>
 
-      <DropdownMenu.Portal>
+      {/* <DropdownMenu.Portal>
         <DropdownMenu.Content
           className=" min-w-[220px] max-h-[800px] overflow-y-auto p-1"
           sideOffset={10}
@@ -76,7 +76,7 @@ const PlaylistButton: React.FC<PlaylistButtonProps> = ({ className }) => {
             </DropdownMenu.Portal>
           </DropdownMenu.Sub>
         </DropdownMenu.Content>
-      </DropdownMenu.Portal>
+      </DropdownMenu.Portal> */}
     </DropdownMenu.Root>
   );
 };

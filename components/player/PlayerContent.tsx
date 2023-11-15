@@ -1,15 +1,15 @@
 import { Song } from "@/types";
 import React, { useEffect, useState } from "react";
-import MediaItem from "./MediaItem";
-import LikedButton from "./LikedButton";
+import MediaItem from "../songs/MediaItem";
+import LikedButton from "../likes/LikedButton";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
-import usePlayer from "@/hooks/usePlayer";
+import usePlayer from "@/hooks/zustand/usePlayer";
 import useSound from "use-sound";
-import Slider from "./Slider";
-import SliderSong from "./SliderSong";
-import PlaylistButton from "./PlaylistButton";
+import Slider from "../slider/Slider";
+import SliderSong from "../slider/SliderSong";
+import PlaylistButton from "../PlaylistButton";
 
 interface PlayerContentProps {
   song: Song;
@@ -23,13 +23,32 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   playlists,
 }) => {
   const player = usePlayer();
-  const [volume, setVolume] = useState(1);
+ 
   const [isPlaying, setIsPLaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [sliderTime, setSliderValue] = useState(0);
 
+  const storedVolume = localStorage.getItem("playerVolume");
+  const initialVolume = storedVolume ? parseFloat(storedVolume) : 1;
+
+  const [volume, setVolume] = useState(initialVolume);
+
+
   const Icon = isPlaying ? BsPauseFill : BsPlayFill;
   const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
+ 
+
+
+
+  // ... (resto del código)
+
+  // Función para cambiar el volumen
+  const handleVolumeChange = (value: number) => {
+    setVolume(value);
+    // Almacenar el volumen en localStorage
+    localStorage.setItem("playerVolume", value.toString());
+  };
+
 
   const onPlayNext = () => {
     if (player.ids.length === 0) {
@@ -123,8 +142,9 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
 
     return `${formattedMinutes}:${formattedSeconds}`;
   }
-
+//Manejas el slider de la cancion 
   const handleSliderChange = (value: number) => {
+    pause();
     setSliderValue(value);
     sound?.seek(value); // Convertimos el valor del slider en el tiempo de reproducción (en milisegundos)
   };
@@ -143,10 +163,10 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         <div className="flex items-center sm:gap-x-2 lg:gap-x-4">
           <MediaItem data={song} player={true} />
           <LikedButton songId={song.id} />
-          <PlaylistButton  />
+          <PlaylistButton />
         </div>
       </div>
-
+      {/* Mobile Button */}
       <div
         className=" flex
       md:hidden
@@ -176,11 +196,14 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
           />
         </div>
       </div>
+
+      {/* Mobile sliderSong */}
       <div className="md:hidden flex w-full items-center relative top-3">
         <p className=" p-3 text-xs text-neutral-400 ">
           {formatTime(currentTime)}
         </p>
         <SliderSong
+          play={play}
           min={0}
           max={duration! / 1000}
           value={currentTime}
@@ -219,12 +242,16 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
             max={duration! / 1000}
             value={currentTime}
             onChange={handleSliderChange}
+            play={play}
           />
           <p className=" p-3  text-xs text-neutral-400 ">
             {duracionFormateada}
           </p>
         </div>
       </div>
+
+
+
       <div className=" hidden md:flex md:relative md:left-8 xl:left-0 w-full xl:justify-end justify-center pr-2">
         <div className=" flex items-center gap-x-2 w-[120px]">
           <VolumeIcon
@@ -232,7 +259,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
             onClick={toggleMute}
             className=" cursor-pointer"
           />
-          <Slider value={volume} onChange={(value) => setVolume(value)} />
+          <Slider value={volume} onChange={handleVolumeChange} />
         </div>
       </div>
     </div>

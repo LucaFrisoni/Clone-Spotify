@@ -4,7 +4,7 @@ import { useUser } from "@/hooks/useUser";
 import { Song } from "@/types";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-import MediaItem from "./MediaItem";
+import MediaItem from "../songs/MediaItem";
 import LikedButton from "./LikedButton";
 import useOnPlay from "@/hooks/useOnPlay";
 import { AiFillClockCircle } from "react-icons/ai";

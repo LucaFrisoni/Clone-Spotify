@@ -7,3 +7,16 @@ html,body,:root{
   color-scheme: dark;
   height: 100%;
 }
+::-webkit-scrollbar {
+  background-color: hsl(207, 4%, 15%);
+  width: 8px
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(207, 4%, 25%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(207, 4%, 35%);
+}

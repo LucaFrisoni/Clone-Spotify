@@ -8,9 +8,9 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 import uniqid from "uniqid";
 import Modal from "./Modal";
-import Input from "./Input";
-import Button from "./Button";
-import usePlaylistModal from "@/hooks/createPlaylistModal";
+import Input from "../Input";
+import Button from "../Button";
+import usePlaylistModal from "@/hooks/zustand/createPlaylistModal";
 
 const PlaylistModal = () => {
   const playlistModal = usePlaylistModal();

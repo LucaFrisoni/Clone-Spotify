@@ -7,12 +7,12 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-import useUploadModal from "@/hooks/useUploadModal";
+import useUploadModal from "@/hooks/zustand/useUploadModal";
 import { useUser } from "@/hooks/useUser";
 
 import Modal from "./Modal";
-import Input from "./Input";
-import Button from "./Button";
+import Input from "../Input";
+import Button from "../Button";
 
 const UploadModal = () => {
   const [isLoading, setIsLoading] = useState(false);

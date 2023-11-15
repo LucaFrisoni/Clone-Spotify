@@ -36,28 +36,27 @@ export const MyUserContextProvider = (props: Props) => {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
 
   const getUserDetails = () => supabase.from("users").select("*").single();
-  const getSubscription = () =>
-    supabase
-      .from("subscriptions")
-      .select("*,prices(*,products(*))")
-      .in("status", ["trialing,active"])
-      .single();
+  // const getSubscription = () =>
+  //   supabase
+  //     .from("subscriptions")
+  //     .select("*,prices(*,products(*))")
+  //     .in("status", ["trialing,active"])
+  //     .single();
 
   useEffect(() => {
     if (user && !isLoadingData && !userDetails && !subscription) {
       setisLoadingData(true);
 
-      Promise.allSettled([getUserDetails(), getSubscription()]).then(
+      Promise.allSettled([getUserDetails()]).then(
         (results) => {
           const userDetailsPromise = results[0];
-          const subscriptionPromise = results[1];
-
+          // const subscriptionPromise = results[1];
           if (userDetailsPromise.status === "fulfilled") {
             setUserDetails(userDetailsPromise.value.data as UserDetails);
           }
-          if (subscriptionPromise.status === "fulfilled") {
-            setSubscription(subscriptionPromise.value.data as Subscription);
-          }
+          // if (subscriptionPromise.status === "fulfilled") {
+          //   setSubscription(subscriptionPromise.value.data as Subscription);
+          // }
           setisLoadingData(false);
         }
       );
@@ -72,17 +71,16 @@ export const MyUserContextProvider = (props: Props) => {
     user,
     userDetails,
     isLoading: isLoadingUser || isLoadingData,
-    subscription
+    subscription,
   };
 
-return <UserContext.Provider value={value} {...props}/>
-
+  return <UserContext.Provider value={value} {...props} />;
 };
 
-export const useUser = () =>{
-    const context = useContext(UserContext)
-    if (context === undefined){
-       throw new Error("useUser must be used within a MyUserContextProvider") 
-    }
-    return context
-}
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error("useUser must be used within a MyUserContextProvider");
+  }
+  return context;
+};

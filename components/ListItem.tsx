@@ -1,5 +1,5 @@
 "use client";
-import useLoadPlayListImage from "@/hooks/useLoadPlayListImage";
+import useLoadPlayListImage from "@/hooks/api/buckets/useLoadPlayListImage";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";

@@ -3,7 +3,7 @@ import useDebounce from "@/hooks/useDebounce";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import qs from "query-string";
-import Input from "./Input";
+import Input from "../Input";
 
 const SearchInput = () => {
   const router = useRouter();

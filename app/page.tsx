@@ -27,7 +27,7 @@ export default async function Home() {
               name="Liked Songs"
               href="liked"
             />
-            {playlists.map((playlist) => (
+            {/* {playlists.map((playlist) => (
               <ListItem
                 key={playlist.imgPlayList_path}
                 image={playlist.imgPlayList_path}
@@ -35,7 +35,7 @@ export default async function Home() {
                 href={`playlist?name=${playlist.name}`}
                 playlist={true}
               />
-            ))}
+            ))} */}
           </div>
         </div>
       </Header>

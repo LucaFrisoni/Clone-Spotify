@@ -1,8 +1,10 @@
 import getSongsByTitle from "@/actions/getSongsByTitle";
 import Header from "@/components/Header";
-import SearchContent from "@/components/SearchContent";
-import SearchInput from "@/components/SearchInput";
+import SearchContent from "@/components/search/SearchContent";
+import SearchInput from "@/components/search/SearchInput";
 import React from "react";
+
+
 
 interface SearchProps {
   searchParams: {

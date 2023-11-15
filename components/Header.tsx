@@ -7,12 +7,12 @@ import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import { HiHome } from "react-icons/hi";
 import { BiSearch } from "react-icons/bi";
 import Button from "./Button";
-import useAuthModal from "@/hooks/useAuthModal";
+import useAuthModal from "@/hooks/zustand/useAuthModal";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useUser } from "@/hooks/useUser";
 import { FaUserAlt } from "react-icons/fa";
 import { toast } from "react-hot-toast";
-import usePlaylistNames from "@/hooks/usePlaylistNames";
+import usePlaylistNames from "@/hooks/zustand/usePlaylistNames";
 
 interface PlaylistItem {
   name: string;
@@ -50,6 +50,7 @@ const Header: React.FC<HeaderProps> = ({ children, className, playlist }) => {
     const { error } = await supabaseClient.auth.signOut();
     //reset any playing songs
     router.refresh();
+    router.push("/")
     if (error) {
       toast.error(error.message);
     } else {

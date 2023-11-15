@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import qs from "query-string";
+
 import Header from "@/components/Header";
 
 import Image from "next/image";

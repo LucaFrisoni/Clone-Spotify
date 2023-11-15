@@ -1,7 +1,8 @@
 "use client";
-import AuthModal from "@/components/AuthModal";
-import PlaylistModal from "@/components/PlaylistModal";
-import UploadModel from "@/components/UploadModel";
+import AuthModal from "@/components/modals/AuthModal";
+import EditProfileModal from "@/components/modals/EditProfileModal";
+import PlaylistModal from "@/components/modals/PlaylistModal";
+import UploadModel from "@/components/modals/UploadModel";
 
 import React, { useEffect, useState } from "react";
 
@@ -19,8 +20,9 @@ const ModalProvider = () => {
   return (
     <div>
       <AuthModal />
-      <UploadModel/>
-      <PlaylistModal/>
+      <UploadModel />
+      <PlaylistModal />
+      <EditProfileModal />
     </div>
   );
 };

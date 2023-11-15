@@ -1,9 +1,9 @@
 "use client";
-import useLoadImage from "@/hooks/UseLoadImage";
+import useLoadImage from "@/hooks/api/buckets/UseLoadImage";
 import { Song } from "@/types";
 import Image from "next/image";
 import React from "react";
-import useLoadSongUrl from "@/hooks/useLoadSongUrl";
+import useLoadSongUrl from "@/hooks/api/buckets/useLoadSongUrl";
 import useSound from "use-sound";
 import { twMerge } from "tailwind-merge";
 
