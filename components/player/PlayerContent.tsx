@@ -10,6 +10,7 @@ import useSound from "use-sound";
 import Slider from "../slider/Slider";
 import SliderSong from "../slider/SliderSong";
 import PlaylistButton from "../PlaylistButton";
+import { FaRandom } from "react-icons/fa";
 
 interface PlayerContentProps {
   song: Song;
@@ -23,7 +24,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   playlists,
 }) => {
   const player = usePlayer();
- 
+
   const [isPlaying, setIsPLaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [sliderTime, setSliderValue] = useState(0);
@@ -33,12 +34,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
 
   const [volume, setVolume] = useState(initialVolume);
 
-
   const Icon = isPlaying ? BsPauseFill : BsPlayFill;
   const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
- 
-
-
 
   // ... (resto del código)
 
@@ -48,8 +45,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     // Almacenar el volumen en localStorage
     localStorage.setItem("playerVolume", value.toString());
   };
-
-
+  //-------------||Botones de Reproduccion||----------------------//
   const onPlayNext = () => {
     if (player.ids.length === 0) {
       return;
@@ -77,6 +73,65 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     }
     player.setId(PrevSong);
   };
+  //-------------||Logica Random||----------------------//
+  const [random, setRandom] = useState(false);
+  const [randomPlayed, setRandomPlayed] = useState(false);
+  const [playedIndexes, setPlayedIndexes] = useState(() => {
+    const storedIndexes = localStorage.getItem("playedIndexes");
+    return storedIndexes ? JSON.parse(storedIndexes) : [];
+  });
+
+  const setRandomFunction = () => {
+    const newRandomState = !random;
+    setRandom(newRandomState);
+    localStorage.setItem("random", JSON.stringify(newRandomState));
+  };
+
+  useEffect(() => {
+    const storedRandom = localStorage.getItem("random");
+    if (storedRandom) {
+      setRandom(JSON.parse(storedRandom));
+    }
+  }, []);
+
+  const onPlayRandom = () => {
+    if (player.ids.length === 0) {
+      return;
+    }
+
+    const remainingIndexes = player.ids.filter(
+      (index) => !playedIndexes.includes(index)
+    );
+
+    if (remainingIndexes.length === 0) {
+      // Ya se han reproducido todas las canciones, reiniciar el registro
+      setPlayedIndexes([]);
+    }
+
+    const randomIndex =
+      remainingIndexes[Math.floor(Math.random() * remainingIndexes.length)];
+
+    const updatedPlayedIndexes = [...playedIndexes, randomIndex];
+
+    if (updatedPlayedIndexes.length > 10) {
+      // Mantener un historial de las últimas 10 reproducciones aleatorias
+      updatedPlayedIndexes.shift();
+    }
+
+    setPlayedIndexes(updatedPlayedIndexes);
+    localStorage.setItem("playedIndexes", JSON.stringify(updatedPlayedIndexes));
+
+    player.setId(randomIndex);
+    setRandomPlayed(true);
+  };
+
+  useEffect(() => {
+    if (randomPlayed) {
+      setRandom(true);
+      setRandomPlayed(false);
+    }
+  }, [randomPlayed]);
+  //-------------||Botones de Reproduccion||----------------------//
 
   const [play, { pause, sound, duration }] = useSound(songUrl, {
     volume: volume,
@@ -142,7 +197,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
 
     return `${formattedMinutes}:${formattedSeconds}`;
   }
-//Manejas el slider de la cancion 
+  //Manejas el slider de la cancion
   const handleSliderChange = (value: number) => {
     pause();
     setSliderValue(value);
@@ -213,6 +268,17 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       </div>
 
       <div className="  hidden h-full md:flex justify-center items-center w-full  gap-x-6 relative md:col-span-2  flex-wrap md:relative md:left-14">
+        <div
+          className="relative right-[10%] cursor-pointer flex flex-col items-center"
+          onClick={setRandomFunction}
+        >
+          <FaRandom className={random ? "text-emerald-500" : ""} />
+
+          {random ? (
+            <div className="mt-2 h-1 w-1 rounded-full bg-emerald-500 transition"></div>
+          ) : null}
+        </div>
+
         <AiFillStepBackward
           onClick={onPlayPrevious}
           size={25}
@@ -228,7 +294,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
           />
         </div>
         <AiFillStepForward
-          onClick={onPlayNext}
+          onClick={random ? onPlayRandom : onPlayNext}
           size={25}
           className=" text-neutral-400 cursor-pointer hover:text-white transition"
         />
@@ -249,8 +315,6 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
           </p>
         </div>
       </div>
-
-
 
       <div className=" hidden md:flex md:relative md:left-8 xl:left-0 w-full xl:justify-end justify-center pr-2">
         <div className=" flex items-center gap-x-2 w-[120px]">
