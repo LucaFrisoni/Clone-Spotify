@@ -51,6 +51,10 @@ const AuthModal = () => {
   //   });
   // }, []);
 
+  const onSuccess = (event: any, session: any) => {
+    router.push("https://clone-spotify-57tq6zvxd-lucafrisoni.vercel.app/");
+  };
+
   return (
     <Modal
       title="Welcome back"
@@ -62,6 +66,8 @@ const AuthModal = () => {
         theme="dark"
         providers={["github"]}
         magicLink
+        redirectTo="https://clone-spotify-57tq6zvxd-lucafrisoni.vercel.app/"
+        
         supabaseClient={supabaseClient}
         appearance={{
           theme: ThemeSupa,
