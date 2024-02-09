@@ -2,33 +2,53 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First, Install the dependencies
+
+```bash
+npm install
+```
+
+Second, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## About this application
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Welcome to our Spotify Clone, a music streaming platform designed to deliver an immersive and enjoyable music experience. Here's what you can expect:
 
-## Learn More
+### Features:
 
-To learn more about Next.js, take a look at the following resources:
+- **Music Playback:**
+  - Explore and listen to a vast collection of songs from our database.
+  - Control playback time and adjust volume to your liking.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Intelligent Music Player:**
+  - Experience our smart music player that learns your preferences over time.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **Library Management:**
+  - Easily add new songs to the platform.
+  - Create and manage your list of favorite tracks.
 
-## Deploy on Vercel
+- **User Profile:**
+  - Customize your profile by uploading a profile picture.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Technological stack
+- **Frontend:**
+  - Next.js
+  - React
+  - Tailwind CSS
+  - NextAuth
+  - Radix
+  - Toast
+  - Zustand
+- **Backend:**
+  - Stripe
+  - Supabase
+- **Database:**
+  - Supabase
+- **Language:**
+  - TypeScript
