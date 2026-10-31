@@ -8,10 +8,14 @@ const getPlayLists = async () => {
     data: { session },
   } = await supabase.auth.getSession();
 
+  if (!session) {
+    return [];
+  }
+
   const { data, error } = await supabase
     .from("playlist")
     .select("name,imgPlayList_path")
-    .eq("user_id", session?.user?.id)
+    .eq("user_id", session.user.id)
     .order("created_at", { ascending: true });
 
   if (error) {

@@ -3,6 +3,7 @@
 import Header from "@/components/Header";
 import { useUser } from "@/hooks/useUser";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import defaultUser from "../../assets/abstract-user-flat-1.png";
 
@@ -18,7 +19,14 @@ import { ClipLoader } from "react-spinners";
 const Account = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { supabaseClient } = useSessionContext();
-  const { user } = useUser();
+  const { user, isLoading: isUserLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.replace("/");
+    }
+  }, [isUserLoading, user, router]);
 
   //----------------------|Logica para el user de Normal|---------------------------------------------------//
   const uploadModal = useEditProfileModal();
@@ -41,6 +49,7 @@ const Account = () => {
         .single();
 
       if (error) {
+        setIsLoading(false);
         return toast.error(error.message);
       }
 

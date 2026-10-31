@@ -32,7 +32,7 @@ const LikedButton: React.FC<LikedButtonProps> = ({ songId }) => {
         .select("*")
         .eq("user_id", user.id)
         .eq("song_id", songId)
-        .single();
+        .maybeSingle();
 
       if (!error && data) {
         setIsLiked(true);

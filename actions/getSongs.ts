@@ -10,7 +10,8 @@ const {data,error} = await supabase.from("songs").select("*").order("created_at"
 
 
 if(error){
-    console.log(error)
+    console.error(error)
+    throw new Error(`Could not load songs: ${error.message}`)
 }
 
 

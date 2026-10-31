@@ -18,7 +18,8 @@ const LikedContent: React.FC<LikedContentProps> = ({ songs }) => {
   const { isLoading, user } = useUser();
 
 
-  const onPlay = useOnPlay(songs)
+  const orderedSongs = [...songs].reverse();
+  const onPlay = useOnPlay(orderedSongs)
   useEffect(() => {
     if (!isLoading && !user) {
       router.replace("/");
@@ -40,7 +41,7 @@ const LikedContent: React.FC<LikedContentProps> = ({ songs }) => {
         <h2 className=" text-neutral-400"><AiFillClockCircle/></h2>
       </div>
       <hr className=" border-neutral-600"/>
-      {songs.reverse().map((song,index) => (
+      {orderedSongs.map((song,index) => (
        
         <div key={song.id} className="flex items-center gap-x-4 w-full">
           <div className="flex-1">

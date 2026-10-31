@@ -1,5 +1,5 @@
 import { Song } from "@/types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MediaItem from "../songs/MediaItem";
 import LikedButton from "../likes/LikedButton";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
@@ -11,6 +11,8 @@ import Slider from "../slider/Slider";
 import SliderSong from "../slider/SliderSong";
 import PlaylistButton from "../PlaylistButton";
 import { FaRandom } from "react-icons/fa";
+import { toast } from "react-hot-toast";
+import { getNextId, getPreviousId, pickRandomId } from "@/lib/playerQueue";
 
 interface PlayerContentProps {
   song: Song;
@@ -51,13 +53,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       return;
     }
 
-    const currentIndex = player.ids.findIndex((id) => id === player.activeId);
-    const nextSong = player.ids[currentIndex + 1];
-
-    if (!nextSong) {
-      return player.setId(player.ids[0]);
-    }
-    player.setId(nextSong);
+    player.setId(getNextId(player.ids, player.activeId));
   };
 
   const onPlayPrevious = () => {
@@ -65,17 +61,14 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       return;
     }
 
-    const currentIndex = player.ids.findIndex((id) => id === player.activeId);
-    const PrevSong = player.ids[currentIndex - 1];
-
-    if (!PrevSong) {
-      return player.setId(player.ids[player.ids.length - 1]);
-    }
-    player.setId(PrevSong);
+    player.setId(getPreviousId(player.ids, player.activeId));
   };
   //-------------||Logica Random||----------------------//
-  const [random, setRandom] = useState(false);
-  const [randomPlayed, setRandomPlayed] = useState(false);
+  const [random, setRandom] = useState(
+    () => localStorage.getItem("random") === "true"
+  );
+  //useSound guarda el onend inicial, el ref le da el valor actual de random
+  const randomRef = useRef(random);
   const [playedIndexes, setPlayedIndexes] = useState(() => {
     const storedIndexes = localStorage.getItem("playedIndexes");
     return storedIndexes ? JSON.parse(storedIndexes) : [];
@@ -84,53 +77,30 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   const setRandomFunction = () => {
     const newRandomState = !random;
     setRandom(newRandomState);
+    randomRef.current = newRandomState;
     localStorage.setItem("random", JSON.stringify(newRandomState));
   };
-
-  useEffect(() => {
-    const storedRandom = localStorage.getItem("random");
-    if (storedRandom) {
-      setRandom(JSON.parse(storedRandom));
-    }
-  }, []);
 
   const onPlayRandom = () => {
     if (player.ids.length === 0) {
       return;
     }
 
-    const remainingIndexes = player.ids.filter(
-      (index) => !playedIndexes.includes(index)
+    const { id, history } = pickRandomId(
+      player.ids,
+      playedIndexes,
+      player.activeId
     );
 
-    if (remainingIndexes.length === 0) {
-      // Ya se han reproducido todas las canciones, reiniciar el registro
-      setPlayedIndexes([]);
-    }
+    setPlayedIndexes(history);
+    localStorage.setItem("playedIndexes", JSON.stringify(history));
 
-    const randomIndex =
-      remainingIndexes[Math.floor(Math.random() * remainingIndexes.length)];
-
-    const updatedPlayedIndexes = [...playedIndexes, randomIndex];
-
-    if (updatedPlayedIndexes.length > 10) {
-      // Mantener un historial de las últimas 10 reproducciones aleatorias
-      updatedPlayedIndexes.shift();
-    }
-
-    setPlayedIndexes(updatedPlayedIndexes);
-    localStorage.setItem("playedIndexes", JSON.stringify(updatedPlayedIndexes));
-
-    player.setId(randomIndex);
-    setRandomPlayed(true);
+    player.setId(id);
   };
 
-  useEffect(() => {
-    if (randomPlayed) {
-      setRandom(true);
-      setRandomPlayed(false);
-    }
-  }, [randomPlayed]);
+  const onPlayNextTrack = () => {
+    return randomRef.current ? onPlayRandom() : onPlayNext();
+  };
   //-------------||Botones de Reproduccion||----------------------//
 
   const [play, { pause, sound, duration }] = useSound(songUrl, {
@@ -140,9 +110,10 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     },
     onend: () => {
       setIsPLaying(false);
-      onPlayNext();
+      onPlayNextTrack();
     },
     onpause: () => setIsPLaying(false),
+    onloaderror: () => toast.error(`Could not load "${song.tilte}"`),
     format: ["mp3"],
   });
 
@@ -183,7 +154,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       }
     };
 
-    const interval = setInterval(updateCurrentTime, 0);
+    const interval = setInterval(updateCurrentTime, 250);
     return () => clearInterval(interval);
   }, [sound]);
 
@@ -245,7 +216,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
             <Icon size={25} className="text-black" />
           </div>
           <AiFillStepForward
-            onClick={onPlayNext}
+            onClick={onPlayNextTrack}
             size={25}
             className="text-neutral-400 cursor-pointer hover:text-white transition sm:w-[60px] w-[120px]"
           />
@@ -294,7 +265,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
           />
         </div>
         <AiFillStepForward
-          onClick={random ? onPlayRandom : onPlayNext}
+          onClick={onPlayNextTrack}
           size={25}
           className=" text-neutral-400 cursor-pointer hover:text-white transition"
         />

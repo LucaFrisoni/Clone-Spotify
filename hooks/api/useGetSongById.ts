@@ -22,6 +22,7 @@ const useGetSongById = (id?: string) => {
         .single();
 
       if (error) {
+        setIsLoading(false);
         return toast.error(error.message);
       }
 

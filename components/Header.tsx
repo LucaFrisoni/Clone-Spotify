@@ -13,6 +13,7 @@ import { useUser } from "@/hooks/useUser";
 import { FaUserAlt } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import usePlaylistNames from "@/hooks/zustand/usePlaylistNames";
+import usePlayer from "@/hooks/zustand/usePlayer";
 
 interface PlaylistItem {
   name: string;
@@ -34,6 +35,7 @@ const Header: React.FC<HeaderProps> = ({ children, className, playlist }) => {
   const { user } = useUser();
 
   const usePlayListNames = usePlaylistNames();
+  const player = usePlayer();
 
   useEffect(() => {
     // Actualizar el estado usePlaylistNames solo cuando localPlaylists cambie
@@ -49,6 +51,7 @@ const Header: React.FC<HeaderProps> = ({ children, className, playlist }) => {
   const handleLogOut = async () => {
     const { error } = await supabaseClient.auth.signOut();
     //reset any playing songs
+    player.reset();
     router.refresh();
     router.push("/")
     if (error) {

@@ -17,6 +17,25 @@ interface MediaItemProps {
   classname?: string;
 }
 
+function convertirTiempoAMinutosYSegundos(tiempoMs: any) {
+  const segundosTotales = Math.floor(tiempoMs / 1000);
+  const minutos = Math.floor(segundosTotales / 60);
+  const segundos = segundosTotales % 60;
+
+  const minutosFormateados = minutos < 10 ? `${minutos}` : minutos;
+  const segundosFormateados = segundos < 10 ? `0${segundos}` : segundos;
+
+  return `${minutosFormateados}:${segundosFormateados}`;
+}
+
+//Solo la vista de lista muestra la duracion, asi el resto no descarga el audio
+const SongDuration: React.FC<{ song: Song }> = ({ song }) => {
+  const songUrl = useLoadSongUrl(song);
+  const [, { duration }] = useSound(songUrl, { format: ["mp3"] });
+
+  return <p>{convertirTiempoAMinutosYSegundos(duration)}</p>;
+};
+
 const MediaItem: React.FC<MediaItemProps> = ({
   onClick,
   data,
@@ -26,24 +45,6 @@ const MediaItem: React.FC<MediaItemProps> = ({
   classname,
 }) => {
   const imageUrl = useLoadImage(data);
-
-  const songUrl = useLoadSongUrl(data!);
-
-  const [play, { pause, sound, duration }] = useSound(songUrl, {
-    format: ["mp3"],
-  });
-
-  function convertirTiempoAMinutosYSegundos(tiempoMs: any) {
-    const segundosTotales = Math.floor(tiempoMs / 1000);
-    const minutos = Math.floor(segundosTotales / 60);
-    const segundos = segundosTotales % 60;
-
-    const minutosFormateados = minutos < 10 ? `${minutos}` : minutos;
-    const segundosFormateados = segundos < 10 ? `0${segundos}` : segundos;
-
-    return `${minutosFormateados}:${segundosFormateados}`;
-  }
-  const duracionFormateada = convertirTiempoAMinutosYSegundos(duration);
 
   const handleClick = () => {
     if (onClick) {
@@ -99,7 +100,7 @@ const MediaItem: React.FC<MediaItemProps> = ({
           </div>
 
           <div className=" text-neutral-400 relative left-4 ">
-            <p>{duracionFormateada}</p>
+            <SongDuration song={data} />
           </div>
         </div>
       )}

@@ -13,10 +13,14 @@ const getSongsByUserId = async (): Promise<Song[]> => {
     return [];
   }
 
+  if (!sessionData.session) {
+    return [];
+  }
+
   const { data, error } = await supabase
     .from("songs")
     .select("*")
-    .eq("user_id", sessionData.session?.user.id)
+    .eq("user_id", sessionData.session.user.id)
     .order("created_at", { ascending: false });
 
   if (error) {

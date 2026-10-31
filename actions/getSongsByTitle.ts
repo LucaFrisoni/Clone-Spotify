@@ -24,7 +24,8 @@ const getSongsByTitle = async (title:string): Promise<Song[]> => {
     .ilike("tilte",`%${title}%`)
     .order("created_at", { ascending: false });
   if (error) {
-    console.log(error.message);
+    console.error(error.message);
+    throw new Error(`Could not search songs: ${error.message}`);
   }
   return (data as any) || [];
 };

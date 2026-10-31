@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 
 import Image from "next/image";
 
-const PlayList = async () => {
+const PlayList = () => {
   // aca crear funcion que traiga las canciones de la playlist
 
   return (
