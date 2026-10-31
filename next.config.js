@@ -1,8 +1,13 @@
+const { getSupabaseImageHost } = require("./lib/supabaseImageHost");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images:{
-        domains:["tcfhjftsmphkzrvnetvn.supabase.co",'avatars.githubusercontent.com']
-    }
-}
+  images: {
+    domains: [
+      getSupabaseImageHost(process.env.NEXT_PUBLIC_SUPABASE_URL),
+      "avatars.githubusercontent.com",
+    ],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
