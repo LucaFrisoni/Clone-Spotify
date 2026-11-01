@@ -33,7 +33,7 @@ const PlaylistButton: React.FC<PlaylistButtonProps> = ({ className }) => {
 
   useEffect(() => {
     router.refresh();
-  }, [playlists]);
+  }, [playlists, router]);
 
   return (
     <DropdownMenu.Root  open={open}>

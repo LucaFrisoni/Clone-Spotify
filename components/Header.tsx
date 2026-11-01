@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import { HiHome } from "react-icons/hi";
@@ -30,22 +30,20 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ children, className, playlist }) => {
   const router = useRouter();
   const AuthModal = useAuthModal();
-  const [localPlaylists, setLocalPlaylists] = useState<PlaylistItem[]>([]); // Estado local
   const supabaseClient = useSupabaseClient();
   const { user } = useUser();
 
-  const usePlayListNames = usePlaylistNames();
+  const setPlayLists = usePlaylistNames((state) => state.setPlayLists);
   const player = usePlayer();
 
   useEffect(() => {
-    // Actualizar el estado usePlaylistNames solo cuando localPlaylists cambie
+    // Actualizar el estado usePlaylistNames solo cuando playlist cambie
     if (playlist) {
       
-      usePlayListNames.setPlayLists(playlist);
-      setLocalPlaylists(playlist)
+      setPlayLists(playlist);
       
     }
-  }, [localPlaylists]);
+  }, [playlist, setPlayLists]);
 
 
   const handleLogOut = async () => {

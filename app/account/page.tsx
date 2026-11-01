@@ -65,7 +65,7 @@ const Account = () => {
       setUser_name2(data.user_name);
       setIsLoading(false);
     };
-    uploadModal.fetchUser = fetchUser;
+    useEditProfileModal.setState({ fetchUser });
 
     fetchUser();
   }, [supabaseClient, user]);
