@@ -1,0 +1,7 @@
+{
+  "crons": [
+    { "path": "/api/keep-alive?run=morning", "schedule": "0 9 * * *" },
+    { "path": "/api/keep-alive?run=afternoon", "schedule": "0 17 * * *" },
+    { "path": "/api/keep-alive?run=night", "schedule": "0 1 * * *" }
+  ]
+}
