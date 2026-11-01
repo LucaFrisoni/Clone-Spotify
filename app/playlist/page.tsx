@@ -16,6 +16,7 @@ const PlayList = () => {
             <div className=" relative h-32 w-32 lg:h-60 lg:w-60">
               <Image
                 fill
+                sizes="240px"
                 src={"/images/liked.png"}
                 alt="Playlist"
                 className=" object-cover"

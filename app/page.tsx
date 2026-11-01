@@ -9,8 +9,7 @@ import PageContent from "@/components/PageContent";
 export const revalidate = 0;
 
 export default async function Home() {
-  const songs = await getSongs();
-  const playlists = await getPlayLists();
+  const [songs, playlists] = await Promise.all([getSongs(), getPlayLists()]);
 
 
   return (
