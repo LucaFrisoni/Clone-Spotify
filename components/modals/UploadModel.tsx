@@ -52,27 +52,28 @@ const UploadModal = () => {
 
       const uniqueID = uniqid();
 
-      // Upload song
-      const { data: songData, error: songError } = await supabaseClient.storage
-        .from("songs")
-        .upload(`song-${values.title}-${uniqueID}`, songFile, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      // Upload both files at the same time
+      const [songUpload, imageUpload] = await Promise.all([
+        supabaseClient.storage
+          .from("songs")
+          .upload(`song-${values.title}-${uniqueID}`, songFile, {
+            cacheControl: "3600",
+            upsert: false,
+          }),
+        supabaseClient.storage
+          .from("images")
+          .upload(`image-${values.title}-${uniqueID}`, imageFile, {
+            cacheControl: "3600",
+            upsert: false,
+          }),
+      ]);
+      const { data: songData, error: songError } = songUpload;
+      const { data: imageData, error: imageError } = imageUpload;
 
       if (songError) {
         setIsLoading(false);
         return toast.error("Failed song upload");
       }
-
-      // Upload image
-      const { data: imageData, error: imageError } =
-        await supabaseClient.storage
-          .from("images")
-          .upload(`image-${values.title}-${uniqueID}`, imageFile, {
-            cacheControl: "3600",
-            upsert: false,
-          });
 
       if (imageError) {
         setIsLoading(false);

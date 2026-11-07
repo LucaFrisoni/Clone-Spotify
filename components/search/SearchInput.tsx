@@ -1,16 +1,21 @@
 "use client";
 import useDebounce from "@/hooks/useDebounce";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import qs from "query-string";
 import Input from "../Input";
 
 const SearchInput = () => {
   const router = useRouter();
-  const [value, setValue] = useState<string>("");
-  const debouncedValue = useDebounce<string>(value, 500);
+  const currentTitle = useSearchParams().get("title") ?? "";
+  const [value, setValue] = useState<string>(currentTitle);
+  const debouncedValue = useDebounce<string>(value, 300);
 
   useEffect(() => {
+    if (debouncedValue === currentTitle) {
+      return;
+    }
+
     const query = {
       title: debouncedValue,
     };
@@ -19,8 +24,8 @@ const SearchInput = () => {
       query: query,
     });
 
-    router.push(url)
-  }, [debouncedValue,router]);
+    router.replace(url)
+  }, [currentTitle,debouncedValue,router]);
 
   return <Input placeholder="What song do you want to listen to ?" value={value} onChange={(e)=>{ setValue(e.target.value)}}/>;
 };

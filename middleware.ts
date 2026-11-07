@@ -7,3 +7,7 @@ export async function middleware(req: NextRequest) {
   await supabase.auth.getSession();
   return res;
 };
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|images/|api/keep-alive|favicon.ico|icon.png).*)"],
+};

@@ -1,0 +1,24 @@
+# Checks every pushed commit; main only accepts commits where this job passed.
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint -- --max-warnings=0
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npm run build

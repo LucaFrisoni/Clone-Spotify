@@ -34,6 +34,7 @@ const ListItem: React.FC<ListItemProps> = ({ image, name, href, playlist }) => {
             <Image
               className="object-cover"
               fill
+              sizes="64px"
               src={imagePath || "/song"}
               alt="Liked image"
             />
@@ -52,6 +53,7 @@ const ListItem: React.FC<ListItemProps> = ({ image, name, href, playlist }) => {
             <Image
               className="object-cover"
               fill
+              sizes="64px"
               src={image || "/song"}
               alt="Liked image"
             />

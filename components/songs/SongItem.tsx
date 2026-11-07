@@ -26,6 +26,7 @@ const SongItem: React.FC<SongItemProps> = ({  onClick, data }) => {
           className=" object-cover"
           src={imagePath || "/song-files"}
           fill
+          sizes="(min-width: 1536px) 12vw, (min-width: 1280px) 16vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
           alt="Image"
         />
       </div>

@@ -4,43 +4,30 @@ import { Song } from "@/types";
 import Image from "next/image";
 import React from "react";
 import useLoadSongUrl from "@/hooks/api/buckets/useLoadSongUrl";
-import useSound from "use-sound";
+import useSongDuration from "@/hooks/useSongDuration";
+import { formatTime } from "@/lib/formatTime";
 import { twMerge } from "tailwind-merge";
 
 interface MediaItemProps {
   onClick?: (id: string) => void;
   data: Song;
   library?: boolean;
-  player?: boolean;
   timer?: string;
   position?: number;
   classname?: string;
 }
 
-function convertirTiempoAMinutosYSegundos(tiempoMs: any) {
-  const segundosTotales = Math.floor(tiempoMs / 1000);
-  const minutos = Math.floor(segundosTotales / 60);
-  const segundos = segundosTotales % 60;
-
-  const minutosFormateados = minutos < 10 ? `${minutos}` : minutos;
-  const segundosFormateados = segundos < 10 ? `0${segundos}` : segundos;
-
-  return `${minutosFormateados}:${segundosFormateados}`;
-}
-
-//Solo la vista de lista muestra la duracion, asi el resto no descarga el audio
+//Solo la vista de lista muestra la duracion, leyendo apenas los metadatos del audio
 const SongDuration: React.FC<{ song: Song }> = ({ song }) => {
-  const songUrl = useLoadSongUrl(song);
-  const [, { duration }] = useSound(songUrl, { format: ["mp3"] });
+  const seconds = useSongDuration(useLoadSongUrl(song));
 
-  return <p>{convertirTiempoAMinutosYSegundos(duration)}</p>;
+  return <p>{formatTime(seconds)}</p>;
 };
 
 const MediaItem: React.FC<MediaItemProps> = ({
   onClick,
   data,
   library,
-  player,
   position,
   classname,
 }) => {
@@ -54,7 +41,7 @@ const MediaItem: React.FC<MediaItemProps> = ({
 
   return (
     <div>
-      {library || player ? (
+      {library ? (
         <div
           onClick={handleClick}
           className=" flex items-center gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md"
@@ -63,6 +50,7 @@ const MediaItem: React.FC<MediaItemProps> = ({
             <Image
               alt="Image"
               fill
+              sizes="48px"
               src={imageUrl || ""}
               className={twMerge(" object-cover", classname)}
             />
@@ -85,6 +73,7 @@ const MediaItem: React.FC<MediaItemProps> = ({
               <Image
                 alt="Image"
                 fill
+                sizes="48px"
                 src={imageUrl || ""}
                 className=" object-cover"
               />
