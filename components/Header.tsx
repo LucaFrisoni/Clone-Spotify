@@ -4,16 +4,11 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
-import { HiHome } from "react-icons/hi";
-import { BiSearch } from "react-icons/bi";
 import Button from "./Button";
 import useAuthModal from "@/hooks/zustand/useAuthModal";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useUser } from "@/hooks/useUser";
-import { FaUserAlt } from "react-icons/fa";
-import { toast } from "react-hot-toast";
 import usePlaylistNames from "@/hooks/zustand/usePlaylistNames";
-import usePlayer from "@/hooks/zustand/usePlayer";
+import UserMenu from "./UserMenu";
 
 interface PlaylistItem {
   name: string;
@@ -27,115 +22,45 @@ interface HeaderProps {
   playlist?: PlaylistItem[];
 }
 
+const NAV_BUTTON = " rounded-full bg-black flex items-center justify-center hover:opacity-75 transition";
+
 const Header: React.FC<HeaderProps> = ({ children, className, playlist }) => {
   const router = useRouter();
   const AuthModal = useAuthModal();
-  const supabaseClient = useSupabaseClient();
   const { user } = useUser();
 
   const setPlayLists = usePlaylistNames((state) => state.setPlayLists);
-  const player = usePlayer();
 
   useEffect(() => {
     // Actualizar el estado usePlaylistNames solo cuando playlist cambie
     if (playlist) {
-      
       setPlayLists(playlist);
-      
     }
   }, [playlist, setPlayLists]);
 
-
-  const handleLogOut = async () => {
-    const { error } = await supabaseClient.auth.signOut();
-    //reset any playing songs
-    player.reset();
-    router.refresh();
-    router.push("/")
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success("Logged out!");
-    }
-  };
-
   return (
-    <div
-      className={twMerge(
-        `h-fit bg-gradient-to-b from-emerald-800 p-6`,
-        className
-      )}
-    >
-      <div className=" w-full mb-4 flex items-center justify-between">
+    <div className={twMerge(`h-fit bg-gradient-to-b from-emerald-800 px-4 py-5 sm:p-6`, className)}>
+      <div className=" w-full mb-4 flex items-center justify-between gap-x-4">
+        {/* En el celular la navegacion esta en la barra inferior */}
         <div className="hidden md:flex gap-x-2 items-center">
-          <button
-            onClick={() => {
-              router.back();
-            }}
-            className=" rounded-full bg-black flex items-center justify-center hover:opacity-75 transition"
-          >
+          <button aria-label="Go back" onClick={() => router.back()} className={NAV_BUTTON}>
             <RxCaretLeft className="text-white" size={35} />
           </button>
-          <button className=" rounded-full bg-black flex items-center justify-center hover:opacity-75 transition">
-            <RxCaretRight
-              onClick={() => {
-                router.forward();
-              }}
-              className="text-white"
-              size={35}
-            />
+          <button aria-label="Go forward" onClick={() => router.forward()} className={NAV_BUTTON}>
+            <RxCaretRight className="text-white" size={35} />
           </button>
         </div>
-        {/* ----------------------------Responsive Cel media --------------------------------------------------------------------------- */}
-
-        <div className="flex md:hidden gap-x-2 items-center">
-          <button
-            onClick={() => router.push("/")}
-            className=" rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition"
-          >
-            <HiHome className="text-black" size={20} />
-          </button>
-          <button className=" rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition">
-            <BiSearch
-              onClick={() => router.push("/search")}
-              className="text-black"
-              size={20}
-            />
-          </button>
-        </div>
-        {/* ----------------------------Responsive Cel media --------------------------------------------------------------------------- */}
-
-        <div className=" flex justify-between items-center gap-x-4">
+        <div className=" ml-auto flex items-center gap-x-2 sm:gap-x-4">
           {user ? (
-            <div className=" flex gap-x-4 items-center">
-              <Button onClick={handleLogOut} className=" bg-white px-6 py-2">
-                Logout
-              </Button>
-              <Button
-                onClick={() => router.push("/account")}
-                className=" bg-white"
-              >
-                <FaUserAlt />
-              </Button>
-            </div>
+            <UserMenu />
           ) : (
             <>
-              <div>
-                <Button
-                  onClick={AuthModal.onOpen}
-                  className=" bg-transparent text-neutral-300 font-medium"
-                >
-                  Sign up
-                </Button>
-              </div>
-              <div>
-                <Button
-                  onClick={AuthModal.onOpen}
-                  className=" bg-white px-6 py-2"
-                >
-                  Log in
-                </Button>
-              </div>
+              <Button onClick={AuthModal.onOpen} className=" w-auto bg-transparent text-neutral-300 font-medium px-3 sm:px-4">
+                Sign up
+              </Button>
+              <Button onClick={AuthModal.onOpen} className=" w-auto bg-white px-5 sm:px-6 py-2">
+                Log in
+              </Button>
             </>
           )}
         </div>

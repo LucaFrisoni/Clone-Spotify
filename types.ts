@@ -9,6 +9,7 @@ export interface Song {
     tilte:string
     song_path:string
     image_path:string
+    added_at?:string
 }
 
 
@@ -18,6 +19,7 @@ export interface UserDetails {
   last_name: string;
   full_name?:string;
   avatar_url?:string
+  user_name?:string
   billing_addres?:Stripe.Address;
   payment_method?: Stripe.PaymentMethod[Stripe.PaymentMethod.Type]
 }
