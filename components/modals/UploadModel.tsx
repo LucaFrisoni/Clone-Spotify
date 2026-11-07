@@ -1,158 +1,55 @@
 "use client";
 
-import uniqid from "uniqid";
 import React, { useState } from "react";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-
+import { twMerge } from "tailwind-merge";
 import useUploadModal from "@/hooks/zustand/useUploadModal";
-import { useUser } from "@/hooks/useUser";
-
 import Modal from "./Modal";
-import Input from "../Input";
-import Button from "../Button";
+import UploadFileForm from "./UploadFileForm";
+import TrackSearch from "./TrackSearch";
+
+type View = "file" | "search";
+
+//Cada vista aclara que audio termina en la biblioteca: la cancion entera o un preview
+const VIEWS: { id: View; label: string; badge: string; description: string }[] = [
+  { id: "file", label: "Upload file", badge: "Full song", description: "Upload your own mp3. The whole song will play." },
+  { id: "search", label: "Search online", badge: "30s preview", description: "Find any song online. Only a 30-second preview is added." },
+];
+
+const ViewTabs: React.FC<{ view: View; onChange: (view: View) => void }> = ({ view, onChange }) => (
+  <div className="mb-5 grid grid-cols-2 gap-1 rounded-full bg-neutral-900 p-1" role="tablist">
+    {VIEWS.map(({ id, label, badge }) => (
+      <button
+        key={id}
+        role="tab"
+        aria-selected={view === id}
+        onClick={() => onChange(id)}
+        className={twMerge(
+          "flex flex-col items-center rounded-full py-1.5 text-sm font-semibold leading-tight text-neutral-400 transition hover:text-white",
+          view === id && "bg-white text-black hover:text-black"
+        )}
+      >
+        {label}
+        <span className={twMerge("text-[11px] font-medium", view === id ? "text-neutral-600" : "text-neutral-500")}>{badge}</span>
+      </button>
+    ))}
+  </div>
+);
 
 const UploadModal = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
   const uploadModal = useUploadModal();
-  const supabaseClient = useSupabaseClient();
-  const { user } = useUser();
-  const router = useRouter();
-
-  const { register, handleSubmit, reset } = useForm<FieldValues>({
-    defaultValues: {
-      author: "",
-      title: "",
-      song: null,
-      image: null,
-    },
-  });
+  const [view, setView] = useState<View>("file");
+  const description = VIEWS.find(({ id }) => id === view)!.description;
 
   const onChange = (open: boolean) => {
     if (!open) {
-      reset();
       uploadModal.onClose();
-    }
-  };
-
-  const onSubmit: SubmitHandler<FieldValues> = async (values) => {
-    try {
-      setIsLoading(true);
-
-      const imageFile = values.image?.[0];
-      const songFile = values.song?.[0];
-
-      if (!imageFile || !songFile || !user) {
-        toast.error("Missing fields");
-        return;
-      }
-
-      const uniqueID = uniqid();
-
-      // Upload both files at the same time
-      const [songUpload, imageUpload] = await Promise.all([
-        supabaseClient.storage
-          .from("songs")
-          .upload(`song-${values.title}-${uniqueID}`, songFile, {
-            cacheControl: "3600",
-            upsert: false,
-          }),
-        supabaseClient.storage
-          .from("images")
-          .upload(`image-${values.title}-${uniqueID}`, imageFile, {
-            cacheControl: "3600",
-            upsert: false,
-          }),
-      ]);
-      const { data: songData, error: songError } = songUpload;
-      const { data: imageData, error: imageError } = imageUpload;
-
-      if (songError) {
-        setIsLoading(false);
-        return toast.error("Failed song upload");
-      }
-
-      if (imageError) {
-        setIsLoading(false);
-        return toast.error("Failed image upload");
-      }
-
-      // Create record
-      const { error: supabaseError } = await supabaseClient
-        .from("songs")
-        .insert({
-          user_id: user.id,
-          tilte: values.title,
-          author: values.author,
-          image_path: imageData.path,
-          song_path: songData.path,
-        });
-
-      if (supabaseError) {
-        return toast.error(`Superbase error ${supabaseError.message}`);
-      }
-
-      router.refresh();
-      setIsLoading(false);
-      toast.success("Song created!");
-      reset();
-      uploadModal.onClose();
-    } catch (error) {
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
     }
   };
 
   return (
-    <Modal
-      title="Add a song"
-      description="Upload an mp3 file"
-      isOpen={uploadModal.isOpen}
-      onChange={onChange}
-    >
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
-        <Input
-          id="title"
-          disabled={isLoading}
-          {...register("title", { required: true })}
-          placeholder="Song title"
-        />
-        <Input
-          id="author"
-          disabled={isLoading}
-          {...register("author", { required: true })}
-          placeholder="Song author"
-        />
-        <div>
-          <div className="pb-1">Select a song file</div>
-          <Input
-            placeholder="test"
-            disabled={isLoading}
-            type="file"
-            accept=".mp3"
-            id="song"
-            {...register("song", { required: true })}
-          />
-        </div>
-        <div>
-          <div className="pb-1">Select an image</div>
-          <Input
-            placeholder="test"
-            disabled={isLoading}
-            type="file"
-            accept="image/*"
-            id="image"
-            {...register("image", { required: true })}
-          />
-        </div>
-        <Button disabled={isLoading} type="submit">
-          Create
-        </Button>
-      </form>
+    <Modal title="Add a song" description={description} isOpen={uploadModal.isOpen} onChange={onChange}>
+      <ViewTabs view={view} onChange={setView} />
+      {view === "file" ? <UploadFileForm onDone={uploadModal.onClose} /> : <TrackSearch />}
     </Modal>
   );
 };

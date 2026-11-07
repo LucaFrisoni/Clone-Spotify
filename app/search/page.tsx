@@ -4,11 +4,9 @@ import SearchContent from "@/components/search/SearchContent";
 import SearchInput from "@/components/search/SearchInput";
 import React from "react";
 
-
-
 interface SearchProps {
   searchParams: {
-    title: string;
+    title?: string;
   };
 }
 
@@ -23,7 +21,8 @@ const Search: React.FC<SearchProps> = async ({ searchParams }) => {
           <SearchInput />
         </div>
       </Header>
-      <SearchContent songs={songs} />
+      {/* La key reinicia la lista paginada cuando cambia la busqueda */}
+      <SearchContent key={searchParams.title ?? ""} songs={songs} title={searchParams.title} />
     </div>
   );
 };

@@ -4,7 +4,7 @@ import {
   useSessionContext,
   useUser as useSupaUser,
 } from "@supabase/auth-helpers-react";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 type UserContextType = {
   accessToken: string | null;
@@ -12,6 +12,7 @@ type UserContextType = {
   userDetails: UserDetails | null;
   isLoading: boolean;
   subscription: Subscription | null;
+  refreshUserDetails: () => Promise<void>;
 };
 
 export const UserContext = createContext<UserContextType | undefined>(
@@ -33,45 +34,33 @@ export const MyUserContextProvider = (props: Props) => {
   const accessToken = session?.access_token ?? null;
   const [isLoadingData, setisLoadingData] = useState(false);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
 
-  const getUserDetails = () => supabase.from("users").select("*").single();
-  // const getSubscription = () =>
-  //   supabase
-  //     .from("subscriptions")
-  //     .select("*,prices(*,products(*))")
-  //     .in("status", ["trialing,active"])
-  //     .single();
+  //Tambien la usa el perfil al editarse, para que header y perfil muestren lo nuevo
+  const refreshUserDetails = useCallback(async () => {
+    const { data, error } = await supabase.from("users").select("*").single();
+    if (error) {
+      console.error(error);
+      return;
+    }
+    setUserDetails(data as UserDetails);
+  }, [supabase]);
 
   useEffect(() => {
-    if (user && !isLoadingData && !userDetails && !subscription) {
+    if (user && !userDetails) {
       setisLoadingData(true);
-
-      Promise.allSettled([getUserDetails()]).then(
-        (results) => {
-          const userDetailsPromise = results[0];
-          // const subscriptionPromise = results[1];
-          if (userDetailsPromise.status === "fulfilled") {
-            setUserDetails(userDetailsPromise.value.data as UserDetails);
-          }
-          // if (subscriptionPromise.status === "fulfilled") {
-          //   setSubscription(subscriptionPromise.value.data as Subscription);
-          // }
-          setisLoadingData(false);
-        }
-      );
-    } else if (!user && !isLoadingUser && !isLoadingData) {
+      refreshUserDetails().finally(() => setisLoadingData(false));
+    } else if (!user && !isLoadingUser) {
       setUserDetails(null);
-      setSubscription(null);
     }
-  }, [user, isLoadingUser]);
+  }, [user, isLoadingUser, userDetails, refreshUserDetails]);
 
   const value = {
     accessToken,
     user,
     userDetails,
     isLoading: isLoadingUser || isLoadingData,
-    subscription,
+    subscription: null,
+    refreshUserDetails,
   };
 
   return <UserContext.Provider value={value} {...props} />;

@@ -5,9 +5,12 @@ import { create } from "zustand";
 
 interface LikedSongsStore {
   userId?: string;
+  //Usuario cuyos likes ya llegaron; antes de eso la lista no se filtra
+  loadedFor?: string;
   ids: Set<string>;
   load: (client: SupabaseClient, userId: string) => Promise<void>;
   toggle: (client: SupabaseClient, userId: string, songId: string) => Promise<void>;
+  reset: () => void;
 }
 
 const pending = new Set<string>();
@@ -26,7 +29,7 @@ const useLikedSongs = create<LikedSongsStore>((set, get) => {
     if (get().userId === userId) {
       return;
     }
-    set({ userId, ids: new Set() });
+    set({ userId, loadedFor: undefined, ids: new Set() });
 
     const { data, error } = await client
       .from("liked_songs")
@@ -37,7 +40,7 @@ const useLikedSongs = create<LikedSongsStore>((set, get) => {
       set({ userId: undefined });
       throw error;
     }
-    set({ ids: new Set(data.map((row) => String(row.song_id))) });
+    set({ loadedFor: userId, ids: new Set(data.map((row) => String(row.song_id))) });
   };
 
   const toggle = async (client: SupabaseClient, userId: string, songId: string) => {
@@ -62,7 +65,9 @@ const useLikedSongs = create<LikedSongsStore>((set, get) => {
     }
   };
 
-  return { userId: undefined, ids: new Set(), load, toggle };
+  const reset = () => set({ userId: undefined, loadedFor: undefined, ids: new Set() });
+
+  return { userId: undefined, loadedFor: undefined, ids: new Set(), load, toggle, reset };
 });
 
 export default useLikedSongs;

@@ -1,23 +1,17 @@
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { fetchSongsPage } from "@/lib/songQueries";
 
-import { Song } from "@/types";
-import {  createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import {cookies} from "next/headers"
+//Solo la primera pagina; el resto se pide al hacer scroll
+const getSongs = async () => {
+  const supabase = createServerComponentClient({ cookies: cookies });
 
-const getSongs = async (): Promise<Song[]> =>{
-const supabase = createServerComponentClient({cookies:cookies})
+  try {
+    return await fetchSongsPage(supabase, 0);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
-const {data,error} = await supabase.from("songs").select("*").order("created_at",{ascending:false})
-
-
-if(error){
-    console.error(error)
-    throw new Error(`Could not load songs: ${error.message}`)
-}
-
-
-return (data as any) || []
-
-}
-
-
-export default getSongs
+export default getSongs;
