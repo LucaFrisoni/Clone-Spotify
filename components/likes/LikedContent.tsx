@@ -29,7 +29,7 @@ const useVisibleLikes = (songs: Song[], userId?: string) => {
 };
 
 const ListHeader = () => (
-  <div className=" sticky top-0 z-[1] flex items-center gap-x-3 border-b border-neutral-700 bg-neutral-900 px-2 py-2 text-sm text-neutral-400">
+  <div className=" flex items-center gap-x-3 border-b border-white/10 px-2 py-2 text-sm text-neutral-400">
     <span className=" w-6 text-right">#</span>
     <span className=" flex-1 pl-[60px]">Title</span>
     <span className=" hidden w-32 lg:block">Date added</span>
@@ -65,7 +65,7 @@ const LikedContent: React.FC<LikedContentProps> = ({ songs: initialSongs }) => {
   }
 
   return (
-    <div className=" flex flex-col w-full px-2 pb-6 sm:px-6 bg-gradient-to-b from-indigo-950/60 to-neutral-900">
+    <div className=" flex flex-col w-full px-2 pb-6 sm:px-6 bg-gradient-to-b from-indigo-950 to-neutral-900 to-[320px]">
       <div className=" py-5 px-2">
         <PlayAllButton onClick={() => onPlay(visibleSongs[0].id)} />
       </div>
