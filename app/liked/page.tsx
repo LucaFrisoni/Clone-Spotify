@@ -28,7 +28,8 @@ const Liked = async () => {
 
   return (
     <div className=" bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
-      <Header className=" from-indigo-700 via-indigo-900/70">
+      {/* El degrade termina en el mismo color con el que empieza la lista, sin cortes */}
+      <Header className=" from-indigo-700 to-indigo-950">
         <LikedHero count={count} />
       </Header>
       <LikedContent songs={songs} />
